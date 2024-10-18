@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+
+.menu-toggle {
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 20px; /* Space from the edge */
+}
+
+      /* Center logo and title together */
+      .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center items vertically */
+            margin: 0; /* Remove auto margin */
+            flex-grow: 1; /* Allow logo to take up available space */
+        }
+
+        .logo img {
+            width: 75px;
+            height: 70px;
+            margin-right: 20px; /* Adjusted margin for spacing */
+        }
+
+        .logo h1 {
+            font-size: 3rem; /* Make the font size larger */
+            font-family: 'Georgia', serif; /* Use a stylish serif font */
+            margin: 0; /* Remove default margin */
+            color: white; /* Set text color to white */
+            text-transform: uppercase; /* Make the text uppercase */
+            letter-spacing: 2px; /* Add spacing between letters */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Add shadow for depth */
+        }
+
+
+/* Remove the "More" links section entirely from your HTML */
+
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100%;
+            transition: left 0.3s ease;
+            z-index: 5;
+            padding-top: 80px;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 1rem 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            margin-top: 80px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 250px;
+        }
+
+        .search-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-section input {
+            padding: 0.5rem;
+            font-size: 1rem;
+            width: 300px;
+        }
+
+        .search-section button {
+            padding: 0.5rem 1rem;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+
+        .book-results {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .book-card {
+            background-color: white;
+            padding: 1rem;
+            margin: 1rem;
+            width: 200px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .book-card img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Dropdown menu for genres */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-content button {
+            background-color: #333;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-align: left;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-content button:hover {
+            background-color: #575757;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .genre-dropdown-btn {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            display: block;
+        }
+
+        .more-links-section {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .more-link {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .more-link:hover {
+            text-decoration: underline;
+        }
+
+        .genre-icon {
+            margin-right: 8px; /* Add space between icon and text */
+        }
+        footer {
+    background-color: #f8f8f8;
+    padding: 20px 0;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.footer-section {
+    flex: 1;
+    padding: 20px;
+}
+
+.footer-section h2 {
+    margin-bottom: 10px;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin: 5px 0;
+}
+
+.footer-section ul li a {
+    text-decoration: none;
+    color: #0073e6;
+}
+
+.footer-section ul li a:hover {
+    text-decoration: underline;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    text-decoration: none;
+    color: #333;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #e0e0e0;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="logo">
+            <img src="https://pbs.twimg.com/profile_images/922870890701905921/T4hOEwSe_400x400.jpg" alt="Logo" class="logo-img">
+            <h1>Kindle</h1>
+        </div>
+    </header>
+
+ 
+    
+    
+
+    <div class="sidebar" id="sidebar">
+        <h3>Navigation</h3>
+        <ul>
+            <li><a href="#" id="home-button">Home</a></li>
+
+            <li><a href="#">Search</a></li>
+            <li><a href="#">Library</a></li>
+        </ul>
+
+        <!-- Dropdown for Genres -->
+        <div class="dropdown">
+            <button class="genre-dropdown-btn">Genres <i class="fas fa-chevron-down"></i></button>
+            <div class="dropdown-content">
+                <button class="genre-btn" data-genre="fiction"><i class="fas fa-book genre-icon"></i>Fiction</button>
+                <button class="genre-btn" data-genre="science"><i class="fas fa-atom genre-icon"></i>Science</button>
+                <button class="genre-btn" data-genre="history"><i class="fas fa-hourglass-half genre-icon"></i>History</button>
+                <button class="genre-btn" data-genre="fantasy"><i class="fas fa-magic genre-icon"></i>Fantasy</button>
+                <button class="genre-btn" data-genre="romance"><i class="fas fa-heart genre-icon"></i>Romance</button>
+                <button class="genre-btn" data-genre="horror"><i class="fas fa-ghost genre-icon"></i>Horror</button>
+                <button class="genre-btn" data-genre="sports"><i class="fas fa-futbol genre-icon"></i>Sports</button>
+                <button class="genre-btn" data-genre="articles"><i class="fas fa-file-alt genre-icon"></i>Articles</button>
+                <button class="genre-btn" data-genre="journals"><i class="fas fa-book-open genre-icon"></i>Journals</button>
+                <button class="genre-btn" data-genre="comedy"><i class="fas fa-laugh genre-icon"></i>Comedy</button>
+                <button class="genre-btn" data-genre="comics"><i class="fas fa-comic-book genre-icon"></i>Comics</button>
+                <button class="genre-btn" data-genre="space"><i class="fas fa-space-shuttle genre-icon"></i>Space</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content" class="main-content">
+        <section class="search-section">
+            <input type="text" id="search-input" placeholder="Search for books...">
+            <button id="search-button">Search</button>
+        </section>
+        <section id="book-results" class="book-results"><h2 id="genre-title" style="text-align: center; margin-top: 20px;"></h2>
+        </section>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h2>About Kindle</h2>
+                <p>Discover a world of books with Kindle. Enjoy reading anytime, anywhere, with our range of e-readers and reading apps.</p>
+            </div>
+            
+            <div class="footer-section links">
+                <h2>Quick Links</h2>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section contact">
+                <h2>Contact Us</h2>
+                <p>Email: support@kindle.com</p>
+                <p>Phone: 1-800-XXX-XXXX</p>
+            </div>
+            
+            <div class="footer-section social">
+                <h2>Follow Us</h2>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Kindle. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    
+
+    <script>
+        // Event listener for menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('main-content');
+
+menuToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('open');
+    mainContent.classList.toggle('sidebar-open');
+});
+// Event listener for Home button
+const homeButton = document.getElementById('home-button');
+homeButton.addEventListener('click', function() {
+    fetchRandomBooks(); // Fetch random books when Home is clicked
+});
+
+
+// Event listeners for genre buttons in dropdown
+const genreButtons = document.querySelectorAll('.genre-btn');
+genreButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const genre = this.getAttribute('data-genre');
+        fetchBooksByGenre(genre);
+    });
+});
+
+// Event listener for search button
+const searchButton = document.getElementById('search-button');
+searchButton.addEventListener('click', function() {
+    const searchTerm = document.getElementById('search-input').value;
+    fetchBooksBySearchTerm(searchTerm);
+});
+
+// Function to fetch books by genre
+function fetchBooksByGenre(genre) {
+            const apiKey = 'AIzaSyBs2mKjdK0obF7meIrXR_xrdLOIh-4M4zg';  // Your API key
+            const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${genre}&key=${apiKey}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    displayBooks(data.items || []);
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                });
+        }
+
+// Function to fetch books by search term
+function fetchBooksBySearchTerm(searchTerm) {
+    const apiKey = 'AIzaSyBs2mKjdK0obF7meIrXR_xrdLOIh-4M4zg';  // Your API key
+    const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${searchTerm}&key=${apiKey}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => displayBooks(data.items))
+        .catch(error => console.error('Error fetching books:', error));
+}
+
+// Function to display books
+function displayBooks(books) {
+    const bookResults = document.getElementById('book-results');
+    bookResults.innerHTML = ''; // Clear previous results
+
+    if (books && books.length > 0) {
+        books.forEach(book => {
+            const bookCard = document.createElement('div');
+            bookCard.className = 'book-card';
+            bookCard.innerHTML = `
+                <h4>${book.volumeInfo.title}</h4>
+                <img src="${book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/128x200'}" alt="${book.volumeInfo.title}">
+                <p>Author: ${book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Unknown'}</p>
+            `;
+
+            // Add a click event to the book card
+            bookCard.addEventListener('click', function() {
+                const previewLink = book.volumeInfo.previewLink; // Get the preview link
+                if (previewLink) {
+                    window.open(previewLink, '_blank'); // Open the preview link in a new tab
+                } else {
+                    alert('Preview Unavailable for this book.'); // Show alert if preview is unavailable
+                }
+            });
+
+            bookResults.appendChild(bookCard);
+        });
+    } else {
+        bookResults.innerHTML = '<p>No books found.</p>';
+    }
+}
+
+// Function to fetch random books when the page loads
+function fetchRandomBooks() {
+    const genres = ['fiction', 'science', 'history', 'fantasy', 'romance', 'horror', 'sports', 'articles', 'journals', 'comedy', 'comics', 'space'];
+    const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+    fetchBooksByGenre(randomGenre);
+}
+
+// Call fetchRandomBooks when the page loads
+document.addEventListener('DOMContentLoaded', fetchRandomBooks);
+</script>
+</body>
+</html>
